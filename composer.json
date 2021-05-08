@@ -1,8 +1,8 @@
 {
-   "name": "pocketmine/pocketmine-mp",
-   "description": "A server software for Minecraft: Pocket Edition written in PHP",
+   "name": "apexiedev/opentouch",
+   "description": "A support-rich server software for Minecraft Bedrock Edition based on PocketMine-MP.",
    "type": "project",
-   "homepage": "https://pmmp.io",
+   "homepage": "https://github.com/ApexieDevelopment/OpenTouch",
    "license": "LGPL-3.0",
    "require": {
       "php": "^7.3 || ^8.0",
