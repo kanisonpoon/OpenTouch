@@ -4,6 +4,7 @@ worlds/*
 plugin_data/*
 plugins/*
 bin*/*
+run
 timings/*
 crashdumps/*
 *.log

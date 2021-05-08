@@ -33,6 +33,8 @@ class VersionString{
 	/** @var string */
 	private $baseVersion;
 	/** @var string */
+	private $softwareVersion;
+	/** @var string */
 	private $suffix;
 
 	/** @var int */
@@ -49,12 +51,18 @@ class VersionString{
 
 	public function __construct(string $baseVersion, bool $isDevBuild = false, int $buildNumber = 0){
 		$this->baseVersion = $baseVersion;
+		$this->softwareVersion = \pocketmine\SERVER_VERSION;
 		$this->development = $isDevBuild;
 		$this->build = $buildNumber;
 
 		preg_match('/^(\d+)\.(\d+)\.(\d+)(?:-(.*))?$/', $this->baseVersion, $matches);
 		if(count($matches) < 4){
 			throw new \InvalidArgumentException("Invalid base version \"$baseVersion\", should contain at least 3 version digits");
+		}
+
+		preg_match('/^(\d+)\.(\d+)\.(\d+)(?:-(.*))?$/', $this->softwareVersion, $matches);
+		if(count($matches) < 4){
+			throw new \InvalidArgumentException("Invalid base version \"$this->softwareVersion\", should contain at least 3 version digits");
 		}
 
 		$this->major = (int) $matches[1];
@@ -73,6 +81,11 @@ class VersionString{
 
 	public function getFullVersion(bool $build = false) : string{
 		$retval = $this->baseVersion;
+		return $retval;
+	}
+
+	public function getSoftwareVersion(bool $build = false) : string{
+		$retval = $this->softwareVersion;
 		if($this->development){
 			$retval .= "+dev";
 			if($build and $this->build > 0){
