@@ -342,7 +342,7 @@ class StartGamePacket extends DataPacket{
 		$this->putString($this->multiplayerCorrelationId);
 		$this->putBool($this->enableNewInventorySystem);
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_433){
-			$this->putString("")//WHAT is this
+			$this->putString(""); //WHAT is this
 		}
 	}
 

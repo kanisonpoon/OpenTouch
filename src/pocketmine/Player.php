@@ -2156,7 +2156,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 		$this->loggedIn = true;
 		$this->server->onPlayerLogin($this);
 
-		$pk = new ResourcePacksInfoPacket();
+		/**$pk = new ResourcePacksInfoPacket();
 		if($this->protocol == BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$manager = $this->server->getResourcePackManager();
 			$pk->resourcePackEntries = [];
@@ -2166,6 +2166,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 			$pk->resourcePackEntries = $manager->getResourceStack();
 			$pk->mustAccept = $manager->resourcePacksRequired();
 		}
+		$this->dataPacket($pk); */
+		$pk = new ResourcePacksInfoPacket();
+		$manager = $this->server->getResourcePackManager();
+		$pk->resourcePackEntries = $manager->getResourceStack();
+		$pk->mustAccept = $manager->resourcePacksRequired();
 		$this->dataPacket($pk);
 	}
 

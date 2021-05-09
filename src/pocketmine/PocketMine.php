@@ -209,7 +209,7 @@ namespace pocketmine {
 
 		define('pocketmine\GIT_COMMIT', $gitHash);
 
-		$composerGitHash = InstalledVersions::getReference('pocketmine/pocketmine-mp');
+		$composerGitHash = InstalledVersions::getReference('apexiedev/opentouch');
 		if($composerGitHash !== null){
 			$currentGitHash = explode("-", \pocketmine\GIT_COMMIT)[0];
 			if($currentGitHash !== $composerGitHash){
