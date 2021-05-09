@@ -293,6 +293,9 @@ class Server{
 	/** @var Config */
 	private $config;
 
+	/** @var Config */
+	public $opentouchConfig;
+
 	/** @var Player[] */
 	private $players = [];
 
@@ -520,7 +523,10 @@ class Server{
 	}
 
 	public function getMotd() : string{
-		return $this->getConfigString("motd", \pocketmine\NAME . " Server");
+		$motd = str_replace(["\u00A70", "\u00A71", "\u00A72", "\u00A73", "\u00A74", "\u00A75", "\u00A76", "\u00A77", "\u00A78", "\u00A79", "\u00A7a", "\u00A7b", "\u00A7c", "\u00A7d", "\u00A7e", "\u00A7f", "\u00A7l", "\u00A7o", "\u00A7n", "\u00A7m", "\u00A7k", "\u00A7r"],
+		[TextFormat::BLACK, TextFormat::DARK_BLUE, TextFormat::DARK_GREEN, TextFormat::DARK_AQUA, TextFormat::DARK_RED, TextFormat::DARK_PURPLE, TextFormat::GOLD, TextFormat::GRAY, TextFormat::DARK_GRAY, TextFormat::BLUE, TextFormat::GREEN, TextFormat::AQUA, TextFormat::RED, TextFormat::LIGHT_PURPLE, TextFormat::YELLOW, TextFormat::WHITE, TextFormat::BOLD, TextFormat::ITALIC, TextFormat::UNDERLINE, TextFormat::STRIKETHROUGH, TextFormat::OBFUSCATED, TextFormat::RESET],
+		$this->getConfigString("motd", \pocketmine\NAME . " Server"));
+		return $motd;
 	}
 
 	/**
@@ -1177,6 +1183,12 @@ class Server{
 
 			$this->dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
 			$this->pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
+
+			$this->logger->info("Loading opentouch.yml...");
+			if(!file_exists($this->dataPath . "opentouch.yml")){
+				@file_put_contents($this->dataPath . "opentouch.yml", file_get_contents(\pocketmine\RESOURCE_PATH . "opentouch.yml"));
+			}
+			$this->opentouchConfig = new Config($this->dataPath . "opentouch.yml", Config::YAML, []);
 
 			$this->logger->info("Loading pocketmine.yml...");
 			if(!file_exists($this->dataPath . "pocketmine.yml")){

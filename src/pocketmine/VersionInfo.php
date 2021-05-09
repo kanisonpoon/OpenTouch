@@ -33,7 +33,7 @@ if(defined('pocketmine\_VERSION_INFO_INCLUDED')){
 const _VERSION_INFO_INCLUDED = true;
 
 const NAME = "OpenTouch";
-const SERVER_VERSION = "1.0.0";
+const SERVER_VERSION = "1.0.2";
 const BASE_VERSION = "3.19.2";
 const IS_DEVELOPMENT_BUILD = true;
 const BUILD_NUMBER = 0;

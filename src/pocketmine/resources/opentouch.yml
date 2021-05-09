@@ -1,0 +1,16 @@
+# Main configuration file for OpenTouch
+# These are some extra settings that this server software has
+# Some of these settings are safe, others can break your server if modified incorrectly
+# New settings/defaults won't appear automatically in this file when upgrading.
+
+settings:
+  # The version message can be also customized by the server admin
+  # This might be useful to provide some more information like the
+  # social links, the server core version, etc...
+  custom-version: false
+  # You can use these placeholders:
+  # - {SERVER_NAME} -> The name of the server software
+  # - {SERVER_VERSION} -> The OpenTouch server software version
+  # - {API_VERSION} -> The PocketMine API version
+  # - {MINECRAFT_VERSION} -> The Minecraft versions supported by the server software
+  custom-version-message: "This server is running a private core running on {SERVER_NAME} {SERVER_VERSION} (API: {API_VERSION}) for Minecraft: Bedrock Edition {MINECRAFT_VERSION}"

@@ -27,6 +27,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\lang\TranslationContainer;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\plugin\Plugin;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use function count;
 use function implode;
@@ -51,13 +52,24 @@ class VersionCommand extends VanillaCommand{
 		}
 
 		if(count($args) === 0){
-			$sender->sendMessage(new TranslationContainer("pocketmine.server.info.extended", [
-				$sender->getServer()->getName(),
+			if($sender->getServer()->opentouchConfig->getNested("settings.custom-version") == true) {
+				$sender->sendMessage(str_replace(["{SERVER_NAME}",
+				"{SERVER_VERSION}",
+				"{API_VERSION}",
+				"{MINECRAFT_VERSION}"],
+				[$sender->getServer()->getName(),
 				$sender->getServer()->getServerVersion(),
 				$sender->getServer()->getPocketMineVersion(),
-				$sender->getServer()->getVersion(),
-				ProtocolInfo::CURRENT_PROTOCOL
-			]));
+				$sender->getServer()->getVersion()],
+				$sender->getServer()->opentouchConfig->getNested("settings.custom-version-message")));
+			} else {
+				$sender->sendMessage(new TranslationContainer("pocketmine.server.info.extended", [
+					$sender->getServer()->getName(),
+					$sender->getServer()->getServerVersion(),
+					$sender->getServer()->getPocketMineVersion(),
+					$sender->getServer()->getVersion()
+				]));
+			}
 		}else{
 			$pluginName = implode(" ", $args);
 			$exactPlugin = $sender->getServer()->getPluginManager()->getPlugin($pluginName);
