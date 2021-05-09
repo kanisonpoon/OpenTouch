@@ -19,7 +19,7 @@ final class BedrockProtocolInfo {
 	public const PROTOCOL_1_16_210 = "1.16.210";
 	public const PROTOCOL_1_16_220 = "1.16.220";
 	public const PROTOCOL_1_16_230 = "1.16.230";
-	public const PROtOCOL_1_17_0 = "1.17.0";
+	public const PROTOCOL_1_17_0 = "1.17.0";
 
 	public static function translateProtocol(int $protocol) : int {
 		if (in_array($protocol, [418, 419, 420, 421, 422, 423, 424], true)) {
