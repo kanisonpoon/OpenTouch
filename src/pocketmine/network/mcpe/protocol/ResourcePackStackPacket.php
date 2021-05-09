@@ -41,9 +41,6 @@ class ResourcePackStackPacket extends DataPacket{
 	/** @var ResourcePack[] */
 	public $resourcePackStack = [];
 
-	/** @var string */
-	public $baseGameVersion = ProtocolInfo::MINECRAFT_VERSION_NETWORK;
-
 	/** @var Experiments */
 	public $experiments;
 
@@ -63,7 +60,7 @@ class ResourcePackStackPacket extends DataPacket{
 			$this->getString();
 		}
 
-		$this->baseGameVersion = $this->getString();
+		$this->getString();//basegameversion
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$this->experiments = Experiments::read($this);
 		}
@@ -86,7 +83,7 @@ class ResourcePackStackPacket extends DataPacket{
 			$this->putString(""); //TODO: subpack name
 		}
 
-		$this->putString($this->baseGameVersion);
+		$this->putString("*");//basegameversion
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$this->experiments->write($this);
 		}
