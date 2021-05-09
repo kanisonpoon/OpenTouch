@@ -37,7 +37,7 @@ interface ProtocolInfo{
 	 */
 
 	/** Actual Minecraft: PE protocol version */
-	public const CURRENT_PROTOCOL = BedrockProtocolInfo::PROTOCOL_1_16_100;
+	public const CURRENT_PROTOCOL = BedrockProtocolInfo::PROTOCOL_419;
 	/** Accept Minecraft: PE protocol version */
 	public const ACCEPT_PROTOCOL = [
 		419, 420, 421, 422, 423, 424,
@@ -45,9 +45,9 @@ interface ProtocolInfo{
 		429, 430, 431, 433, 434, 435, 437, 440
 	];
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
-	public const MINECRAFT_VERSION = 'v1.16.100-1.16.220';
+	public const MINECRAFT_VERSION = 'v1.16.100-1.17.0.54';
 	/** Version number sent to clients in ping responses. */
-	public const MINECRAFT_VERSION_NETWORK = '1.16.220';
+	public const MINECRAFT_VERSION_NETWORK = '1.17.0.54';
 
 	public const LOGIN_PACKET = 0x01;
 	public const PLAY_STATUS_PACKET = 0x02;

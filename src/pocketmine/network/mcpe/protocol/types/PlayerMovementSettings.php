@@ -51,9 +51,9 @@ final class PlayerMovementSettings{
 		$rewindHistorySize = 0;
 		$serverAuthBlockBreaking = false;
 
-		if ($in->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+		if ($in->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$movementType = $in->getVarInt();
-			if ($in->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_210) {
+			if ($in->protocol >= BedrockProtocolInfo::PROTOCOL_428) {
 				$rewindHistorySize = $in->getVarInt();
 				$serverAuthBlockBreaking = $in->getBool();
 			}
@@ -64,9 +64,9 @@ final class PlayerMovementSettings{
 	}
 
 	public function write(NetworkBinaryStream $out) : void {
-		if ($out->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+		if ($out->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$out->putVarInt($this->movementType);
-			if ($out->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_210) {
+			if ($out->protocol >= BedrockProtocolInfo::PROTOCOL_428) {
 				$out->putVarInt($this->rewindHistorySize);
 				$out->putBool($this->serverAuthoritativeBlockBreaking);
 			}

@@ -100,7 +100,7 @@ class NetworkBinaryStream extends BinaryStream{
 	public function getSkin() : SkinData{
 		$skinId = $this->getString();
 		$playFabId = "";
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_210){
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_428){
 			$playFabId = $this->getString();
 		}
 		$skinResourcePatch = $this->getString();
@@ -112,7 +112,7 @@ class NetworkBinaryStream extends BinaryStream{
 			$animationType = $this->getLInt();
 			$animationFrames = $this->getLFloat();
 			$expressionType = 0;
-			if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+			if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 				$expressionType = $this->getLInt();
 			}
 			$animations[] = new SkinAnimation($skinImage, $animationType, $animationFrames, $expressionType);
@@ -160,7 +160,7 @@ class NetworkBinaryStream extends BinaryStream{
 	 */
 	public function putSkin(SkinData $skin){
 		$this->putString($skin->getSkinId());
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_210){
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_422){
 			$this->putString($skin->getPlayFabId() ?? "");
 		}
 		$this->putString($skin->getResourcePatch());
@@ -170,7 +170,7 @@ class NetworkBinaryStream extends BinaryStream{
 			$this->putSkinImage($animation->getImage());
 			$this->putLInt($animation->getType());
 			$this->putLFloat($animation->getFrames());
-			if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+			if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 				$this->putLInt($animation->getExpressionType());
 			}
 		}
@@ -216,7 +216,7 @@ class NetworkBinaryStream extends BinaryStream{
 	}
 
 	public function getItemStackWithoutStackId() : Item{
-		if($this->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220 && $this instanceof DataPacket) {
+		if($this->protocol < BedrockProtocolInfo::PROTOCOL_431 && $this instanceof DataPacket) {
 			return $this->getSlot();
 		}
 		return $this->getItemStack(function () : void {
@@ -225,7 +225,7 @@ class NetworkBinaryStream extends BinaryStream{
 	}
 
 	public function putItemStackWithoutStackId(Item $item) : void{
-		if($this->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220) {
+		if($this->protocol < BedrockProtocolInfo::PROTOCOL_431) {
 			$this->putSlot($item);
 			return;
 		}
@@ -995,7 +995,7 @@ class NetworkBinaryStream extends BinaryStream{
 	}
 
 	public function putItem(ItemStackWrapper $item) : void {
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_220) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_431) {
 			$item->write($this);
 			return;
 		}
@@ -1003,7 +1003,7 @@ class NetworkBinaryStream extends BinaryStream{
 	}
 
 	public function getItem() : ItemStackWrapper {
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_220) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_431) {
 			return ItemStackWrapper::read($this);
 		}
 		return ItemStackWrapper::legacy($this->getSlot());

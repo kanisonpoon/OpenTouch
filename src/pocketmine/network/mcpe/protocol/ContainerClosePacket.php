@@ -37,14 +37,14 @@ class ContainerClosePacket extends DataPacket{
 
 	protected function decodePayload(){
 		$this->windowId = $this->getByte();
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$this->server = $this->getBool();
 		}
 	}
 
 	protected function encodePayload(){
 		$this->putByte($this->windowId);
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$this->putBool($this->server);
 		}
 	}

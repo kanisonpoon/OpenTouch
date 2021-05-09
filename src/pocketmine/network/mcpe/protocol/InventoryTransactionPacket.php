@@ -65,7 +65,7 @@ class InventoryTransactionPacket extends DataPacket{
 		}
 
 		$transactionType = $in->getUnsignedVarInt();
-		if($this->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220){
+		if($this->protocol < BedrockProtocolInfo::PROTOCOL_431){
 			$this->hasItemStackIds = $this->getBool();
 		}
 
@@ -103,7 +103,7 @@ class InventoryTransactionPacket extends DataPacket{
 		}
 
 		$out->putUnsignedVarInt($this->trData->getTypeId());
-		if($this->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220) {
+		if($this->protocol < BedrockProtocolInfo::PROTOCOL_431) {
 			$this->putBool($this->hasItemStackIds);
 		}
 

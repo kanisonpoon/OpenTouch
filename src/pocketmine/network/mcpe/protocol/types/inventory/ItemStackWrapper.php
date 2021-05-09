@@ -48,7 +48,7 @@ final class ItemStackWrapper{
 	public function getItemStack() : Item{ return $this->itemStack; }
 
 	public static function read(NetworkBinaryStream $in) : self{
-		if($in->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_220) {
+		if($in->protocol >= BedrockProtocolInfo::PROTOCOL_431) {
 			$stackId = 0;
 			$stack = $in->getItemStack(function (NetworkBinaryStream $in) use (&$stackId) : void {
 				$hasNetId = $in->getBool();
@@ -64,7 +64,7 @@ final class ItemStackWrapper{
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
-		if($out->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_220) {
+		if($out->protocol >= BedrockProtocolInfo::PROTOCOL_431) {
 			$out->putItemStack($this->itemStack, function (NetworkBinaryStream $out) : void {
 				$out->putBool($this->stackId !== 0);
 				if ($this->stackId !== 0) {

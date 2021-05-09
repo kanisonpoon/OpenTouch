@@ -11,7 +11,7 @@ final class EntityMetaTranslator {
 	use SingletonTrait;
 
 	public function translateLegacyEntityMetaId(int $id, int $protocol): ?int {
-		if ($protocol >= BedrockProtocolInfo::PROTOCOL_1_16_210) {
+		if ($protocol >= BedrockProtocolInfo::PROTOCOL_428) {
 			switch ($id) {
 				case 80:
 					return 81;
@@ -23,7 +23,7 @@ final class EntityMetaTranslator {
 	}
 
 	public function translateNewEntityMetaId(int $id, int $protocol): ?int {
-		if ($protocol >= BedrockProtocolInfo::PROTOCOL_1_16_210) {
+		if ($protocol >= BedrockProtocolInfo::PROTOCOL_428) {
 			switch ($id) {
 				case 81:
 					return 80;

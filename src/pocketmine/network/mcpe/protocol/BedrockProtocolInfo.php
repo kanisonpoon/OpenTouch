@@ -8,6 +8,7 @@ use function in_array;
 
 final class BedrockProtocolInfo {
 	public const PROTOCOL_419 = 419;
+	public const PROTOCOL_422 = 422;
 	public const PROTOCOL_428 = 428;
 	public const PROTOCOL_431 = 431;
     public const PROTOCOL_433 = 433;

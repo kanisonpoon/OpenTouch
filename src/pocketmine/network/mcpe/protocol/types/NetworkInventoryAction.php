@@ -113,7 +113,7 @@ class NetworkInventoryAction{
 		$this->inventorySlot = $packet->getUnsignedVarInt();
 		$this->oldItem = $packet->getItem();
 		$this->newItem = $packet->getItem();
-		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220 && $hasItemStackIds){
+		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_431 && $hasItemStackIds){
 			$this->newItemStackId = $packet->readGenericTypeNetworkId();
 		}
 
@@ -145,7 +145,7 @@ class NetworkInventoryAction{
 		$packet->putUnsignedVarInt($this->inventorySlot);
 		$packet->putItem($this->oldItem);
 		$packet->putItem($this->newItem);
-		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220 && $hasItemStackIds){
+		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_431 && $hasItemStackIds){
 			$packet->writeGenericTypeNetworkId($this->newItemStackId);
 		}
 	}

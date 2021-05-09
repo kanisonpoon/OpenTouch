@@ -59,10 +59,10 @@ final class RuntimeBlockMapping{
 		}
 		self::$bedrockKnownStates = $list;
 
-		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_1_16_200);
-		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_1_16_100);
+		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_422);
+		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_419);
 
-		self::$mappings[BedrockProtocolInfo::PROTOCOL_1_16_210] = self::setupLegacyMappings();
+		self::$mappings[BedrockProtocolInfo::PROTOCOL_428] = self::setupLegacyMappings();
 	}
 
 	private static function setupJSONPalette(int $protocol) : void {
@@ -164,6 +164,6 @@ final class RuntimeBlockMapping{
 
 	public static function getMapping(int $protocol) : BlockMapping {
 		self::lazyInit();
-		return self::$mappings[$protocol] ?? self::$mappings[BedrockProtocolInfo::PROTOCOL_1_16_210];
+		return self::$mappings[$protocol] ?? self::$mappings[BedrockProtocolInfo::PROTOCOL_428];
 	}
 }
