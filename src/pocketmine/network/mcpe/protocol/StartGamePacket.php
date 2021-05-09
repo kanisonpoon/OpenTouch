@@ -294,7 +294,7 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->commandsEnabled);
 		$this->putBool($this->isTexturePacksRequired);
 		$this->putGameRules($this->gameRules);
-		if($this->protocol >= 414) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$this->experiments->write($this);
 		}
 		$this->putBool($this->hasBonusChestEnabled);
