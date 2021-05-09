@@ -7,22 +7,28 @@ namespace pocketmine\network\mcpe\protocol;
 use function in_array;
 
 final class BedrockProtocolInfo {
-	public const PROTOCOL_1_16_100 = 419;
-	public const PROTOCOL_1_16_200 = 422;
-	public const PROTOCOL_1_16_210 = 428;
-	public const PROTOCOL_1_16_220 = 431;
-        public const PROTOCOL_1_16_230 = 433;
+	public const PROTOCOL_419 = 419;
+	public const PROTOCOL_428 = 428;
+	public const PROTOCOL_431 = 431;
+    public const PROTOCOL_433 = 433;
+	public const PROTOCOL_437 = 437;
 
 	public static function translateProtocol(int $protocol) : int {
-		if (in_array($protocol, [414, 415, 416, 417, 418, 419, 420, 421, 422], true)) {
-			return BedrockProtocolInfo::PROTOCOL_1_16_200;
+		if (in_array($protocol, [414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424], true)) {
+			return BedrockProtocolInfo::PROTOCOL_419;
 		}
-		if (in_array($protocol, [423, 424, 425, 426, 427, 428], true)) {
-			return BedrockProtocolInfo::PROTOCOL_1_16_210;
+		if (in_array($protocol, [425, 426, 427, 428], true)) {
+			return BedrockProtocolInfo::PROTOCOL_428;
 		}
-                if (in_array($protocol, [433, 434, 435, 437, 440], true)){
-                        return self::ProtocolInfo::PROTOCOL_1_16_230;
-                }
+		if (in_array($protocol, [429, 430, 431], true)) {
+			return BedrockProtocolInfo::PROTOCOL_431;
+		}
+		if (in_array($protocol, [433, 434, 435, 437, 440], true)){
+			return BedrockProtocolInfo::PROTOCOL_433;
+		}
+		if (in_array($protocol, [437, 440], true)){
+			return BedrockProtocolInfo::PROTOCOL_437;
+		}
 		return $protocol;
 	}
 }
