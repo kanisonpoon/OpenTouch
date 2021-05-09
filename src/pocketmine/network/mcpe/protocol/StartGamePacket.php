@@ -294,7 +294,7 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->commandsEnabled);
 		$this->putBool($this->isTexturePacksRequired);
 		$this->putGameRules($this->gameRules);
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
+		if($this->protocol >= 414) {
 			$this->experiments->write($this);
 		}
 		$this->putBool($this->hasBonusChestEnabled);
@@ -341,6 +341,9 @@ class StartGamePacket extends DataPacket{
 
 		$this->putString($this->multiplayerCorrelationId);
 		$this->putBool($this->enableNewInventorySystem);
+		if($this->protocol >= 433){
+			$this->putString("")//WHAT is this
+		}
 	}
 
 	public function handle(NetworkSession $session) : bool{
