@@ -39,7 +39,7 @@ final class BedrockProtocolInfo {
 		}
 		return $protocol;
 	}
-	public static function basegameversion(string $protocol){
+	public static function basegameversion(int $protocol){
 		if (in_array($protocol, [418, 419], true)){
 			return self::PROTOCOL_1_16_100;
 		}

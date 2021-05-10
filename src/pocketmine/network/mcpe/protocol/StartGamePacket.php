@@ -306,7 +306,7 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->isFromWorldTemplate);
 		$this->putBool($this->isWorldTemplateOptionLocked);
 		$this->putBool($this->onlySpawnV1Villagers);
-		$this->putString(BedrockProtocolInfo::basegameversion($this->protocol);//vanillaVersion | basegameversion
+		$this->putString(BedrockProtocolInfo::basegameversion($this->protocol));
 		$this->putLInt($this->limitedWorldWidth);
 		$this->putLInt($this->limitedWorldLength);
 		$this->putBool($this->isNewNether);

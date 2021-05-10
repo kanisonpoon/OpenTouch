@@ -83,7 +83,7 @@ class ResourcePackStackPacket extends DataPacket{
 			$this->putString(""); //TODO: subpack name
 		}
 
-		$this->putString(BedrockProtocolInfo::basegameversion($this->protocol);
+		$this->putString(BedrockProtocolInfo::basegameversion($this->protocol));
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
 			$this->experiments->write($this);
 		}
