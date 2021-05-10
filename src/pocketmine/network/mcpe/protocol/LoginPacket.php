@@ -34,7 +34,9 @@ use function json_decode;
 
 class LoginPacket extends DataPacket{
 	public const NETWORK_ID = ProtocolInfo::LOGIN_PACKET;
-
+	
+	/** @var string */
+	public $clientVersion;
 	/** @var string */
 	public $username;
 	/** @var int */
@@ -130,10 +132,10 @@ class LoginPacket extends DataPacket{
 
 		$this->clientDataJwt = $buffer->get($buffer->getLInt());
 		$this->clientData = Utils::decodeJWT($this->clientDataJwt);
-
+		$this->clientVersion = $this->clientData['GameVersion'] ?? null; //player clientVersion
 		$this->clientId = $this->clientData["ClientRandomId"] ?? null;
 		$this->serverAddress = $this->clientData["ServerAddress"] ?? null;
-
+		
 		$this->locale = $this->clientData["LanguageCode"] ?? null;
 	}
 
