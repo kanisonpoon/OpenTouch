@@ -135,8 +135,6 @@ class StartGamePacket extends DataPacket{
 	public $isWorldTemplateOptionLocked = false;
 	/** @var bool */
 	public $onlySpawnV1Villagers = false;
-	/** @var string */
-	public $vanillaVersion = ProtocolInfo::MINECRAFT_VERSION_NETWORK;
 	/** @var int */
 	public $limitedWorldWidth = 0;
 	/** @var int */
@@ -223,7 +221,7 @@ class StartGamePacket extends DataPacket{
 		$this->isFromWorldTemplate = $this->getBool();
 		$this->isWorldTemplateOptionLocked = $this->getBool();
 		$this->onlySpawnV1Villagers = $this->getBool();
-		$this->vanillaVersion = $this->getString();
+		$this->getString();//vanillaVersion
 		$this->limitedWorldWidth = $this->getLInt();
 		$this->limitedWorldLength = $this->getLInt();
 		$this->isNewNether = $this->getBool();
@@ -308,7 +306,7 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->isFromWorldTemplate);
 		$this->putBool($this->isWorldTemplateOptionLocked);
 		$this->putBool($this->onlySpawnV1Villagers);
-		$this->putString($this->vanillaVersion);
+		$this->putString(BedrockProtocolInfo::basegameversion($this->protocol);//vanillaVersion | basegameversion
 		$this->putLInt($this->limitedWorldWidth);
 		$this->putLInt($this->limitedWorldLength);
 		$this->putBool($this->isNewNether);
