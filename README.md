@@ -10,6 +10,6 @@
 
 ## Credits
 
-@BlackJack200 -> Most of the 1.16.100+ support
-@pooooooon -> Experimental Caves & Cliffs update versions
-@ItzLightyHD -> Some new features for OpenTouch
+- [**@ItzLightyHD**](https://github.com/itzlightyhd) -> Adding features to OpenTouch (new API, mods, etc...)
+- [**@BlackJack200**](https://github.com/blackjack200) -> Most of the 1.16.100+ support
+- [**@pooooooon**](https://github.com/pooooooon) -> Experimental Caves & Cliffs update versions
