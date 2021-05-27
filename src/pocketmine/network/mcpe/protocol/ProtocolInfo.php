@@ -42,7 +42,7 @@ interface ProtocolInfo{
 	public const ACCEPT_PROTOCOL = [
 		419, 420, 421, 422, 423, 424,
                 425, 426, 427, 428,
-		429, 430, 431, 433, 434, 435, 437, 440
+		429, 430, 431, 433, 434, 435, 437, 440, 441
 	];
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
 	public const MINECRAFT_VERSION = 'v1.16.100-1.17.0.54';
