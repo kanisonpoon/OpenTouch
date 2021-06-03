@@ -13,6 +13,7 @@ final class BedrockProtocolInfo {
 	public const PROTOCOL_431 = 431;
     public const PROTOCOL_433 = 433;
 	public const PROTOCOL_437 = 437;
+	public const PROTOCOL_441 = 441;
 
 	public const PROTOCOL_1_16_100 = "1.16.100";
 	public const PROTOCOL_1_16_200 = "1.16.200";
@@ -20,6 +21,7 @@ final class BedrockProtocolInfo {
 	public const PROTOCOL_1_16_220 = "1.16.220";
 	public const PROTOCOL_1_16_230 = "1.16.230";
 	public const PROTOCOL_1_17_0 = "1.17.0";
+	public const PROTOCOL_1_17_10 = "1.17.10";
 
 	public static function translateProtocol(int $protocol) : int {
 		if (in_array($protocol, [418, 419, 420, 421, 422, 423, 424], true)) {
@@ -36,6 +38,9 @@ final class BedrockProtocolInfo {
 		}
 		if (in_array($protocol, [437, 440], true)){
 			return self::PROTOCOL_437;
+		}
+		if (in_array($protocol, [441]), true){
+		    return self::PROTOCOL_441;
 		}
 		return $protocol;
 	}
@@ -58,6 +63,12 @@ final class BedrockProtocolInfo {
 		if (in_array($protocol, [437, 440], true)){
 		    return self::PROTOCOL_1_17_0;
 		}
-		return $protocol;
+		if (in_array($protocol, [437, 440], true)){
+		    return self::PROTOCOL_1_17_0;
+		}
+		if (in_array($protocol, [441], true)){
+		    return self::PROTOCOL_1_17_10;
+		}
+		return self::PROTOCOL_1_16_100;
 	}
 }
