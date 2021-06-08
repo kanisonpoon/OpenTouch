@@ -709,6 +709,9 @@ class NetworkBinaryStream extends BinaryStream{
 		$rules = [];
 		for($i = 0; $i < $count; ++$i){
 			$name = $this->getString();
+			if($this->protocol >= BedrockProtocolInfo::PROTOCOL_437){
+				$this->getBool();
+			}
 			$type = $this->getUnsignedVarInt();
 			$value = null;
 			switch($type){
@@ -740,6 +743,9 @@ class NetworkBinaryStream extends BinaryStream{
 		$this->putUnsignedVarInt(count($rules));
 		foreach($rules as $name => $rule){
 			$this->putString($name);
+			if($this->protocol >= BedrockProtocolInfo::PROTOCOL_437){
+				$this->putBool(false);
+			}
 			$this->putUnsignedVarInt($rule[0]);
 			switch($rule[0]){
 				case GameRuleType::BOOL:
