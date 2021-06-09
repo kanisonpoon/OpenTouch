@@ -160,7 +160,8 @@ class StartGamePacket extends DataPacket{
 	public $enchantmentSeed = 0;
 	/** @var string */
 	public $multiplayerCorrelationId = ""; //TODO: this should be filled with a UUID of some sort
-
+	/** @var string */
+	public $serversoftware = "";
 	/**
 	 * @var BlockPaletteEntry[]
 	 * @phpstan-var list<BlockPaletteEntry>
@@ -175,89 +176,7 @@ class StartGamePacket extends DataPacket{
 	/** @var bool */
 	public $enableNewInventorySystem = false; //TODO
 
-	protected function decodePayload(){
-		$this->entityUniqueId = $this->getEntityUniqueId();
-		$this->entityRuntimeId = $this->getEntityRuntimeId();
-		$this->playerGamemode = $this->getVarInt();
-
-		$this->playerPosition = $this->getVector3();
-
-		$this->pitch = $this->getLFloat();
-		$this->yaw = $this->getLFloat();
-
-		//Level settings
-		$this->seed = $this->getVarInt();
-		$this->spawnSettings = SpawnSettings::read($this);
-		$this->generator = $this->getVarInt();
-		$this->worldGamemode = $this->getVarInt();
-		$this->difficulty = $this->getVarInt();
-		$this->getBlockPosition($this->spawnX, $this->spawnY, $this->spawnZ);
-		$this->hasAchievementsDisabled = $this->getBool();
-		$this->time = $this->getVarInt();
-		$this->eduEditionOffer = $this->getVarInt();
-		$this->hasEduFeaturesEnabled = $this->getBool();
-		$this->eduProductUUID = $this->getString();
-		$this->rainLevel = $this->getLFloat();
-		$this->lightningLevel = $this->getLFloat();
-		$this->hasConfirmedPlatformLockedContent = $this->getBool();
-		$this->isMultiplayerGame = $this->getBool();
-		$this->hasLANBroadcast = $this->getBool();
-		$this->xboxLiveBroadcastMode = $this->getVarInt();
-		$this->platformBroadcastMode = $this->getVarInt();
-		$this->commandsEnabled = $this->getBool();
-		$this->isTexturePacksRequired = $this->getBool();
-		$this->gameRules = $this->getGameRules();
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
-			$this->experiments = Experiments::read($this);
-		}
-		$this->hasBonusChestEnabled = $this->getBool();
-		$this->hasStartWithMapEnabled = $this->getBool();
-		$this->defaultPlayerPermission = $this->getVarInt();
-		$this->serverChunkTickRadius = $this->getLInt();
-		$this->hasLockedBehaviorPack = $this->getBool();
-		$this->hasLockedResourcePack = $this->getBool();
-		$this->isFromLockedWorldTemplate = $this->getBool();
-		$this->useMsaGamertagsOnly = $this->getBool();
-		$this->isFromWorldTemplate = $this->getBool();
-		$this->isWorldTemplateOptionLocked = $this->getBool();
-		$this->onlySpawnV1Villagers = $this->getBool();
-		$this->getString();//vanillaVersion
-		$this->limitedWorldWidth = $this->getLInt();
-		$this->limitedWorldLength = $this->getLInt();
-		$this->isNewNether = $this->getBool();
-		if($this->getBool()){
-			$this->experimentalGameplayOverride = $this->getBool();
-		}else{
-			$this->experimentalGameplayOverride = null;
-		}
-
-		$this->levelId = $this->getString();
-		$this->worldName = $this->getString();
-		$this->premiumWorldTemplateId = $this->getString();
-		$this->isTrial = $this->getBool();
-		$this->playerMovementSettings = PlayerMovementSettings::read($this);
-		$this->currentTick = $this->getLLong();
-
-		$this->enchantmentSeed = $this->getVarInt();
-
-		$this->blockPalette = [];
-		for($i = 0, $len = $this->getUnsignedVarInt(); $i < $len; ++$i){
-			$blockName = $this->getString();
-			$state = $this->getNbtCompoundRoot();
-			$this->blockPalette[] = new BlockPaletteEntry($blockName, $state);
-		}
-
-		$this->itemTable = [];
-		for($i = 0, $count = $this->getUnsignedVarInt(); $i < $count; ++$i){
-			$stringId = $this->getString();
-			$numericId = $this->getSignedLShort();
-			$isComponentBased = $this->getBool();
-
-			$this->itemTable[] = new ItemTypeEntry($stringId, $numericId, $isComponentBased);
-		}
-
-		$this->multiplayerCorrelationId = $this->getString();
-		$this->enableNewInventorySystem = $this->getBool();
+	protected function decodePayload(){//not use startgamepacket was only server send
 	}
 
 	protected function encodePayload(){
@@ -340,7 +259,7 @@ class StartGamePacket extends DataPacket{
 		$this->putString($this->multiplayerCorrelationId);
 		$this->putBool($this->enableNewInventorySystem);
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_433){
-			$this->putString("PocketMine-MP 3.19.2");//server software 
+			$this->putString($this->serversoftware);//server software 
 		}
 	}
 
