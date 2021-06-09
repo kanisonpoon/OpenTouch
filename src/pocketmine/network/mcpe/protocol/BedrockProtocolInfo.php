@@ -39,7 +39,7 @@ final class BedrockProtocolInfo {
 		if (in_array($protocol, [437, 440], true)){
 			return self::PROTOCOL_437;
 		}
-		if (in_array($protocol, [441]), true){
+		if (in_array($protocol, [441], true)){
 		    return self::PROTOCOL_441;
 		}
 		return $protocol;

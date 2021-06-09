@@ -174,6 +174,8 @@ class StartGamePacket extends DataPacket{
 	public $itemTable;
 	/** @var bool */
 	public $enableNewInventorySystem = false; //TODO
+	/** @var string */
+	public $serverSoftwareVersion;
 
 	protected function decodePayload(){
 		$this->entityUniqueId = $this->getEntityUniqueId();
@@ -258,6 +260,7 @@ class StartGamePacket extends DataPacket{
 
 		$this->multiplayerCorrelationId = $this->getString();
 		$this->enableNewInventorySystem = $this->getBool();
+		$this->serverSoftwareVersion = $this->getString();
 	}
 
 	protected function encodePayload(){
@@ -341,12 +344,10 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->enableNewInventorySystem);
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_433){
 			/*
-				1.16.230+ clients need to also display the version, so instead of showing
-				an empty string, we are going to show the client version, so we can trick
-				the client to think that the version the server is is the same as the
-				client's 
+				1.16.230+ clients need to also display the version, so we are going
+				to put the server software version on it.
 			*/
-			$this->putString(BedrockProtocolInfo::basegameversion($this->protocol));
+			$this->putString($this->serverSoftwareVersion);
 		}
 	}
 
