@@ -340,13 +340,7 @@ class StartGamePacket extends DataPacket{
 		$this->putString($this->multiplayerCorrelationId);
 		$this->putBool($this->enableNewInventorySystem);
 		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_433){
-			/*
-				1.16.230+ clients need to also display the version, so instead of showing
-				an empty string, we are going to show the client version, so we can trick
-				the client to think that the version the server is is the same as the
-				client's 
-			*/
-			$this->putString(BedrockProtocolInfo::basegameversion($this->protocol));
+			$this->putString("PocketMine-MP 3.19.2");//server software 
 		}
 	}
 
