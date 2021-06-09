@@ -58,7 +58,8 @@ final class RuntimeBlockMapping{
 			$list[] = $stream->getNbtCompoundRoot();
 		}
 		self::$bedrockKnownStates = $list;
-
+		
+		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_437);
 		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_422);
 		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_419);
 
