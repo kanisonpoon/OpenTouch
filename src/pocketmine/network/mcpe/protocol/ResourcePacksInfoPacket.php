@@ -44,6 +44,9 @@ class ResourcePacksInfoPacket extends DataPacket{
 	protected function decodePayload(){
 		$this->mustAccept = $this->getBool();
 		$this->hasScripts = $this->getBool();
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_448){
+			$this->getBool();
+		}
 		$behaviorPackCount = $this->getLShort();
 		while($behaviorPackCount-- > 0){
 			$this->getString();
@@ -73,6 +76,9 @@ class ResourcePacksInfoPacket extends DataPacket{
 	protected function encodePayload(){
 		$this->putBool($this->mustAccept);
 		$this->putBool($this->hasScripts);
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_448){
+			$this->putBool(false);
+		}
 		$this->putLShort(count($this->behaviorPackEntries));
 		foreach($this->behaviorPackEntries as $entry){
 			$this->putString($entry->getPackId());
