@@ -14,6 +14,7 @@ final class BedrockProtocolInfo {
     public const PROTOCOL_433 = 433;
 	public const PROTOCOL_437 = 437;
 	public const PROTOCOL_441 = 441;
+	public const PROTOCOL_448 = 448;
 
 	public const PROTOCOL_1_16_100 = "1.16.100";
 	public const PROTOCOL_1_16_200 = "1.16.200";
@@ -42,6 +43,9 @@ final class BedrockProtocolInfo {
 		if (in_array($protocol, [441], true)){
 		    return self::PROTOCOL_441;
 		}
+		if (in_array($protocol, [448], true)){
+		    return self::PROTOCOL_448;
+		}
 		return $protocol;
 	}
 	public static function basegameversion(int $protocol){
@@ -63,7 +67,7 @@ final class BedrockProtocolInfo {
 		if (in_array($protocol, [437, 440], true)){
 		    return self::PROTOCOL_1_17_0;
 		}
-		if (in_array($protocol, [441], true)){
+		if (in_array($protocol, [441, 448], true)){
 		    return self::PROTOCOL_1_17_10;
 		}
 		return self::PROTOCOL_1_16_100;
