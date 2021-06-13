@@ -44,7 +44,7 @@ class SetActorDataPacket extends DataPacket{
 	protected function decodePayload(){
 		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->metadata = $this->getEntityMetadata();
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->tick = $this->getUnsignedVarLong();
 		}
 	}
@@ -52,7 +52,7 @@ class SetActorDataPacket extends DataPacket{
 	protected function encodePayload(){
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->putEntityMetadata($this->metadata);
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->putUnsignedVarLong($this->tick);
 		}
 	}

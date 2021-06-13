@@ -62,7 +62,7 @@ final class ItemStackRequest{
 	public function getFilterStrings() : array{ return $this->filterStrings; }
 
 	private static function readAction(NetworkBinaryStream $in, int $typeId) : ItemStackRequestAction{
-		if($typeId >= 9 && $in->protocol < BedrockProtocolInfo::PROTOCOL_428){
+		if($typeId >= 9 && $in->protocol < BedrockProtocolInfo::PROTOCOL_1_16_210){
 			//MineBlockStackRequestAction
 			$typeId += 1;
 		}

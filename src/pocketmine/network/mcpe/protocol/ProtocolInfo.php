@@ -28,13 +28,22 @@ namespace pocketmine\network\mcpe\protocol;
  */
 interface ProtocolInfo{
 
+	/**
+	 * NOTE TO DEVELOPERS
+	 * Do not waste your time or ours submitting pull requests changing game and/or protocol version numbers.
+	 * Pull requests changing game and/or protocol version numbers will be closed.
+	 *
+	 * This file is generated automatically, do not edit it manually.
+	 */
+
 	/** Actual Minecraft: PE protocol version */
-	public const CURRENT_PROTOCOL = BedrockProtocolInfo::PROTOCOL_419;
+	public const CURRENT_PROTOCOL = BedrockProtocolInfo::PROTOCOL_1_16_100;
 	/** Accept Minecraft: PE protocol version */
 	public const ACCEPT_PROTOCOL = [
-		419, 420, 421, 422, 423, 424,
-        425, 426, 427, 428,
-		429, 430, 431, 433, 434, 435, 437, 440, 441
+		419, 420, 421, 422,
+		423, 424, 425, 426, 427, 428,
+		431,
+		440
 	];
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
 	public const MINECRAFT_VERSION = 'v1.16.100-1.17.0';

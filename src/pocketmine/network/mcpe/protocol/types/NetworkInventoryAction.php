@@ -28,7 +28,6 @@ use pocketmine\inventory\transaction\action\CreativeInventoryAction;
 use pocketmine\inventory\transaction\action\DropItemAction;
 use pocketmine\inventory\transaction\action\InventoryAction;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
-use pocketmine\item\Item;
 use pocketmine\network\mcpe\NetworkBinaryStream;
 use pocketmine\network\mcpe\protocol\BedrockProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper;
@@ -113,7 +112,7 @@ class NetworkInventoryAction{
 		$this->inventorySlot = $packet->getUnsignedVarInt();
 		$this->oldItem = $packet->getItem();
 		$this->newItem = $packet->getItem();
-		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_431 && $hasItemStackIds){
+		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220 && $hasItemStackIds){
 			$this->newItemStackId = $packet->readGenericTypeNetworkId();
 		}
 
@@ -145,7 +144,7 @@ class NetworkInventoryAction{
 		$packet->putUnsignedVarInt($this->inventorySlot);
 		$packet->putItem($this->oldItem);
 		$packet->putItem($this->newItem);
-		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_431 && $hasItemStackIds){
+		if($packet->protocol < BedrockProtocolInfo::PROTOCOL_1_16_220 && $hasItemStackIds){
 			$packet->writeGenericTypeNetworkId($this->newItemStackId);
 		}
 	}

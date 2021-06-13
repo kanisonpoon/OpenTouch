@@ -58,15 +58,16 @@ final class RuntimeBlockMapping{
 			$list[] = $stream->getNbtCompoundRoot();
 		}
 		self::$bedrockKnownStates = $list;
-		
-		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_437);
-		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_422);
-		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_419);
 
-		self::$mappings[BedrockProtocolInfo::PROTOCOL_428] = self::setupLegacyMappings();
+		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_1_16_200);
+		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_1_16_100);
+
+		self::setupJSONPalette(BedrockProtocolInfo::PROTOCOL_1_17_0);
+
+		self::$mappings[BedrockProtocolInfo::PROTOCOL_1_16_210] = self::setupLegacyMappings();
 	}
 
-	private static function setupJSONPalette(int $protocol) : void {
+	private static function setupJSONPalette(int $protocol) : void{
 		$path = \pocketmine\RESOURCE_PATH . "palette/";
 		$legacyToRuntimeMap = json_decode(file_get_contents($path . sprintf("%s_%s.json", $protocol, "legacyToRuntimeMap")), true);
 		$runtimeToLegacyMap = json_decode(file_get_contents($path . sprintf("%s_%s.json", $protocol, "runtimeToLegacyMap")), true);
@@ -163,8 +164,8 @@ final class RuntimeBlockMapping{
 		return self::$bedrockKnownStates;
 	}
 
-	public static function getMapping(int $protocol) : BlockMapping {
+	public static function getMapping(int $protocol) : BlockMapping{
 		self::lazyInit();
-		return self::$mappings[$protocol] ?? self::$mappings[BedrockProtocolInfo::PROTOCOL_428];
+		return self::$mappings[$protocol] ?? self::$mappings[BedrockProtocolInfo::PROTOCOL_1_16_210];
 	}
 }

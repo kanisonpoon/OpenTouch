@@ -42,7 +42,6 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\player\cheat\PlayerIllegalMoveEvent;
-use pocketmine\event\player\PlayerAchievementAwardedEvent;
 use pocketmine\event\player\PlayerAnimationEvent;
 use pocketmine\event\player\PlayerBedEnterEvent;
 use pocketmine\event\player\PlayerBedLeaveEvent;
@@ -97,7 +96,6 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\metadata\MetadataValue;
 use pocketmine\nbt\NetworkLittleEndianNBTStream;
-use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\ListTag;
@@ -233,7 +231,7 @@ use const PHP_INT_MAX;
 /**
  * Main class that handles networking, recovery, and packet sending to the server part
  */
-class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
+class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 	public const SURVIVAL = 0;
 	public const CREATIVE = 1;
@@ -349,8 +347,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 	/** @var bool */
 	protected $removeFormat = true;
 
-	/** @var bool[] name of achievement => bool */
-	protected $achievements = [];
 	/** @var bool */
 	protected $playedBefore;
 	/** @var int */
@@ -1332,45 +1328,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 		}
 	}
 
-	public function hasAchievement(string $achievementId) : bool{
-		if(!isset(Achievement::$list[$achievementId])){
-			return false;
-		}
-
-		return $this->achievements[$achievementId] ?? false;
-	}
-
-	public function awardAchievement(string $achievementId) : bool{
-		if(isset(Achievement::$list[$achievementId]) and !$this->hasAchievement($achievementId)){
-			foreach(Achievement::$list[$achievementId]["requires"] as $requirementId){
-				if(!$this->hasAchievement($requirementId)){
-					return false;
-				}
-			}
-			$ev = new PlayerAchievementAwardedEvent($this, $achievementId);
-			$ev->call();
-			if(!$ev->isCancelled()){
-				$this->achievements[$achievementId] = true;
-				Achievement::broadcast($this, $achievementId);
-
-				return true;
-			}else{
-				return false;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * @return void
-	 */
-	public function removeAchievement(string $achievementId){
-		if($this->hasAchievement($achievementId)){
-			$this->achievements[$achievementId] = false;
-		}
-	}
-
 	public function getGamemode() : int{
 		return $this->gamemode;
 	}
@@ -2102,7 +2059,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 				if($kickForXUIDMismatch($p->getXuid())){
 					return;
 				}
-				if(!$p->kick("logged in from another location")){
+				if(!$p->kick("disconnectionScreen.loggedinOtherLocation")){
 					$this->close($this->getLeaveMessage(), "Logged in from another location");
 					return;
 				}
@@ -2144,30 +2101,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 			$this->setLevel($level);
 		}
 
-		$this->achievements = [];
-
-		$achievements = $this->namedtag->getCompoundTag("Achievements") ?? [];
-		/** @var ByteTag $achievement */
-		foreach($achievements as $achievement){
-			$this->achievements[$achievement->getName()] = $achievement->getValue() !== 0;
-		}
-
 		$this->sendPlayStatus(PlayStatusPacket::LOGIN_SUCCESS);
 
 		$this->loggedIn = true;
 		$this->server->onPlayerLogin($this);
 
-		/**$pk = new ResourcePacksInfoPacket();
-		if($this->protocol == BedrockProtocolInfo::PROTOCOL_1_16_100) {
-			$manager = $this->server->getResourcePackManager();
-			$pk->resourcePackEntries = [];
-			$pk->mustAccept = false;
-		} else {
-			$manager = $this->server->getResourcePackManager();
-			$pk->resourcePackEntries = $manager->getResourceStack();
-			$pk->mustAccept = $manager->resourcePacksRequired();
-		}
-		$this->dataPacket($pk); */
 		$pk = new ResourcePacksInfoPacket();
 		$manager = $this->server->getResourcePackManager();
 		$pk->resourcePackEntries = $manager->getResourceStack();
@@ -2287,9 +2225,9 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 		$pk->levelId = "";
 		$pk->worldName = $this->server->getMotd();
 		$pk->experiments = new Experiments([], false);
-		$pk->itemTable = ItemTypeDictionary::getInstance()->getEntries();
+		$pk->itemTable = ItemTypeDictionary::getInstance()->getDictionary($this->protocol)->getEntries();
 		$pk->playerMovementSettings = new PlayerMovementSettings(PlayerMovementType::LEGACY, 0, false);
-		$pk->serverSoftwareVersion = sprintf("%s %s", \pocketmine\NAME, \pocketmine\SERVER_VERSION);
+		$pk->serverSoftwareVersion = sprintf("%s %s", \pocketmine\NAME, \pocketmine\VERSION);
 		$this->dataPacket($pk);
 
 		$this->sendDataPacket(new AvailableActorIdentifiersPacket());
@@ -2329,7 +2267,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 		$pk = $this->server->getCraftingManager()->getCraftingDataPacket($this->protocol);
 		if($pk !== null){
 			$this->dataPacket($pk);
-		} else {
+		}else{
 			//TODO
 			$this->dataPacket(new CraftingDataPacket());
 		}
@@ -2527,8 +2465,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 
 				return false;
 			}
-
-			//TODO: fix achievement for getting iron from furnace
 
 			return true;
 		}elseif($packet->trData instanceof MismatchTransactionData){
@@ -2934,7 +2870,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 
 				$tile = $this->level->getTile($pos);
 				if($tile instanceof ItemFrame and $tile->hasItem()){
-					if (lcg_value() <= $tile->getItemDropChance()){
+					if(lcg_value() <= $tile->getItemDropChance()){
 						$this->level->dropItem($tile->getBlock(), $tile->getItem());
 					}
 					$tile->setItem(null);
@@ -2996,7 +2932,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 			case PlayerActionPacket::ACTION_CRACK_BREAK:
 				$block = $this->level->getBlock($pos);
 				$this->level->broadcastLevelEvent($pos, LevelEventPacket::EVENT_PARTICLE_PUNCH_BLOCK, -1,
-					function (int $protocol) use ($block) : int {
+					function(int $protocol) use ($block) : int{
 						return RuntimeBlockMapping::getMapping($protocol)->toStaticRuntimeId($block->getId(), $block->getDamage());
 					}
 				);
@@ -3818,12 +3754,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 			}
 		}
 
-		$achievements = new CompoundTag("Achievements");
-		foreach($this->achievements as $achievement => $status){
-			$achievements->setByte($achievement, $status ? 1 : 0);
-		}
-		$this->namedtag->setTag($achievements);
-
 		$this->namedtag->setInt("playerGameType", $this->gamemode);
 		$this->namedtag->setLong("lastPlayed", (int) floor(microtime(true) * 1000));
 
@@ -3878,11 +3808,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 	}
 
 	protected function respawn() : void{
-		if($this->server->isHardcore()){
-			$this->setBanned(true);
-			return;
-		}
-
 		$ev = new PlayerRespawnEvent($this, $this->getSpawn());
 		$ev->call();
 
@@ -4125,7 +4050,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 	/**
 	 * Removes an inventory window from the player.
 	 *
-	 * @param bool      $force Forces removal of permanent windows such as normal inventory, cursor
+	 * @param bool $force Forces removal of permanent windows such as normal inventory, cursor
 	 *
 	 * @return void
 	 * @throws \InvalidArgumentException if trying to remove a fixed inventory window without the `force` parameter as true
@@ -4210,19 +4135,19 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer {
 
 	}
 
-	public function getLoaderId(): int {
+	public function getLoaderId() : int{
 		return $this->loaderId;
 	}
 
-	public function isLoaderActive(): bool {
+	public function isLoaderActive() : bool{
 		return $this->isConnected();
 	}
 
-	public function getFishingHook(): ?FishingHook {
+	public function getFishingHook() : ?FishingHook{
 		return $this->fishingHook;
 	}
 
-	public function setFishingHook(?FishingHook $fishingHook): void {
+	public function setFishingHook(?FishingHook $fishingHook) : void{
 		$this->fishingHook = $fishingHook;
 	}
 }

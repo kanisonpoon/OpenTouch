@@ -104,10 +104,10 @@ class StartGamePacket extends DataPacket{
 	public $isTexturePacksRequired = true;
 	/**
 	 * @var mixed[][]
-	 * @phpstan-var array<string, array{0: int, 1: bool|int|float}>
+	 * @phpstan-var array<string, array{0: int, 1: bool|int|float, 2: bool}>
 	 */
 	public $gameRules = [ //TODO: implement this
-		"naturalregeneration" => [GameRuleType::BOOL, false] //Hack for client side regeneration
+		"naturalregeneration" => [GameRuleType::BOOL, false, false] //Hack for client side regeneration
 	];
 	/** @var Experiments */
 	public $experiments;
@@ -135,6 +135,8 @@ class StartGamePacket extends DataPacket{
 	public $isWorldTemplateOptionLocked = false;
 	/** @var bool */
 	public $onlySpawnV1Villagers = false;
+	/** @var string */
+	public $vanillaVersion = ProtocolInfo::MINECRAFT_VERSION_NETWORK;
 	/** @var int */
 	public $limitedWorldWidth = 0;
 	/** @var int */
@@ -209,7 +211,7 @@ class StartGamePacket extends DataPacket{
 		$this->commandsEnabled = $this->getBool();
 		$this->isTexturePacksRequired = $this->getBool();
 		$this->gameRules = $this->getGameRules();
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->experiments = Experiments::read($this);
 		}
 		$this->hasBonusChestEnabled = $this->getBool();
@@ -223,7 +225,7 @@ class StartGamePacket extends DataPacket{
 		$this->isFromWorldTemplate = $this->getBool();
 		$this->isWorldTemplateOptionLocked = $this->getBool();
 		$this->onlySpawnV1Villagers = $this->getBool();
-		$this->getString();//vanillaVersion
+		$this->vanillaVersion = $this->getString();
 		$this->limitedWorldWidth = $this->getLInt();
 		$this->limitedWorldLength = $this->getLInt();
 		$this->isNewNether = $this->getBool();
@@ -260,7 +262,11 @@ class StartGamePacket extends DataPacket{
 
 		$this->multiplayerCorrelationId = $this->getString();
 		$this->enableNewInventorySystem = $this->getBool();
-		$this->serverSoftwareVersion = $this->getString();
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_0){
+			$this->serverSoftwareVersion = $this->getString();
+		} else {
+			$this->serverSoftwareVersion = '';
+		}
 	}
 
 	protected function encodePayload(){
@@ -295,7 +301,7 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->commandsEnabled);
 		$this->putBool($this->isTexturePacksRequired);
 		$this->putGameRules($this->gameRules);
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->experiments->write($this);
 		}
 		$this->putBool($this->hasBonusChestEnabled);
@@ -309,7 +315,7 @@ class StartGamePacket extends DataPacket{
 		$this->putBool($this->isFromWorldTemplate);
 		$this->putBool($this->isWorldTemplateOptionLocked);
 		$this->putBool($this->onlySpawnV1Villagers);
-		$this->putString(BedrockProtocolInfo::basegameversion($this->protocol));
+		$this->putString($this->vanillaVersion);
 		$this->putLInt($this->limitedWorldWidth);
 		$this->putLInt($this->limitedWorldLength);
 		$this->putBool($this->isNewNether);
@@ -342,11 +348,7 @@ class StartGamePacket extends DataPacket{
 
 		$this->putString($this->multiplayerCorrelationId);
 		$this->putBool($this->enableNewInventorySystem);
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_433){
-			/*
-				1.16.230+ clients need to also display the version, so we are going
-				to put the server software version on it.
-			*/
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_0){
 			$this->putString($this->serverSoftwareVersion);
 		}
 	}

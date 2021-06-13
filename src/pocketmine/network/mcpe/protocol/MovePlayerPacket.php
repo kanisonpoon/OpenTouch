@@ -72,7 +72,7 @@ class MovePlayerPacket extends DataPacket{
 			$this->teleportCause = $this->getLInt();
 			$this->teleportItem = $this->getLInt();
 		}
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->tick = $this->getUnsignedVarLong();
 		}
 	}
@@ -90,7 +90,7 @@ class MovePlayerPacket extends DataPacket{
 			$this->putLInt($this->teleportCause);
 			$this->putLInt($this->teleportItem);
 		}
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->putUnsignedVarLong($this->tick);
 		}
 	}

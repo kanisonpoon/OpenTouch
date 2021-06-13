@@ -64,7 +64,7 @@ class ResourcePackStackPacket extends DataPacket{
 		}
 
 		$this->baseGameVersion = $this->getString();
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->experiments = Experiments::read($this);
 		}
 	}
@@ -87,7 +87,7 @@ class ResourcePackStackPacket extends DataPacket{
 		}
 
 		$this->putString($this->baseGameVersion);
-		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_419) {
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_16_100) {
 			$this->experiments->write($this);
 		}
 	}

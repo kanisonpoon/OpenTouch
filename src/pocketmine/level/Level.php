@@ -72,7 +72,6 @@ use pocketmine\metadata\MetadataValue;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
-use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
@@ -567,17 +566,34 @@ class Level implements ChunkManager, Metadatable{
 	/**
 	 * Broadcasts a LevelSoundEvent to players in the area.
 	 *
-	 * @param bool    $disableRelativeVolume If true, all players receiving this sound-event will hear the sound at full volume regardless of distance
-	 * @param (callable(int $protocol) : int)|null $consumer
+	 * @param bool $disableRelativeVolume If true, all players receiving this sound-event will hear the sound at full volume regardless of distance
 	 *
 	 * @return void
 	 */
-	public function broadcastLevelSoundEvent(Vector3 $pos, int $soundId, int $extraData = -1, int $entityTypeId = -1, bool $isBabyMob = false, bool $disableRelativeVolume = false, ?callable $consumer = null){
+	public function broadcastLevelSoundEvent(Vector3 $pos, int $soundId, int $extraData = -1, int $entityTypeId = -1, bool $isBabyMob = false, bool $disableRelativeVolume = false){
 		$pk = new LevelSoundEventPacket();
 		$pk->sound = $soundId;
 		$pk->extraData = $extraData;
+		$pk->entityTypeId = $entityTypeId;
+		$pk->isBabyMob = $isBabyMob;
+		$pk->disableRelativeVolume = $disableRelativeVolume;
+		$pk->position = $pos->asVector3();
+		$this->broadcastPacketToViewers($pos, $pk);
+	}
+
+	/**
+	 * Broadcasts a LevelSoundEvent to players in the area with extraDataConsumer.
+	 *
+	 * @param bool $disableRelativeVolume If true, all players receiving this sound-event will hear the sound at full volume regardless of distance
+	 * @param (callable(int $protocol) : int) $consumer
+	 *
+	 * @return void
+	 */
+	public function broadcastLevelSoundEventConsumer(Vector3 $pos, int $soundId, callable $consumer, int $entityTypeId = -1, bool $isBabyMob = false, bool $disableRelativeVolume = false){
+		$pk = new LevelSoundEventPacket();
+		$pk->sound = $soundId;
 		$pk->extraDataConsumer = $consumer;
-		$pk->entityType = AddActorPacket::LEGACY_ID_MAP_BC[$entityTypeId] ?? ":";
+		$pk->entityTypeId = $entityTypeId;
 		$pk->isBabyMob = $isBabyMob;
 		$pk->disableRelativeVolume = $disableRelativeVolume;
 		$pk->position = $pos->asVector3();
@@ -1749,12 +1765,12 @@ class Level implements ChunkManager, Metadatable{
 
 		$drops = [];
 		if($player === null or !$player->isCreative()){
-			$drops = array_merge(...array_map(function(Block $block) use ($item) : array{ return $block->getDrops($item); }, $affectedBlocks));
+			$drops = array_merge(...array_map(static function(Block $block) use ($item) : array{ return $block->getDrops($item); }, $affectedBlocks));
 		}
 
 		$xpDrop = 0;
 		if($player !== null and !$player->isCreative()){
-			$xpDrop = array_sum(array_map(function(Block $block) use ($item) : int{ return $block->getXpDropForTool($item); }, $affectedBlocks));
+			$xpDrop = array_sum(array_map(static function(Block $block) use ($item) : int{ return $block->getXpDropForTool($item); }, $affectedBlocks));
 		}
 
 		if($player !== null){
@@ -1941,10 +1957,10 @@ class Level implements ChunkManager, Metadatable{
 		}
 
 		if($playSound){
-			$this->broadcastLevelSoundEvent($hand, LevelSoundEventPacket::SOUND_PLACE, $hand->getRuntimeId(), -1, false, false,
-			function (int $protocol) use ($hand) : int {
-				return RuntimeBlockMapping::getMapping($protocol)->toStaticRuntimeId($hand->getId(), $hand->getDamage());
-			});
+			$this->broadcastLevelSoundEventConsumer($hand, LevelSoundEventPacket::SOUND_PLACE,
+				static function(int $protocol) use ($hand) : int{
+					return RuntimeBlockMapping::getMapping($protocol)->toStaticRuntimeId($hand->getId(), $hand->getDamage());
+				}, -1, false, false);
 		}
 
 		$item->pop();
