@@ -143,7 +143,7 @@ function main() : void{
 		echo "Git hash detected as $gitHash" . PHP_EOL;
 	}
 	foreach(buildPhar(
-		$opts["out"] ?? getcwd() . DIRECTORY_SEPARATOR . \pocketmine\NAME,
+		$opts["out"] ?? getcwd() . DIRECTORY_SEPARATOR . \pocketmine\NAME . ".phar",
 		dirname(__DIR__) . DIRECTORY_SEPARATOR,
 		[
 			'src',
