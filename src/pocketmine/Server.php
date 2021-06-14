@@ -514,10 +514,6 @@ class Server{
 		return true;
 	}
 
-	public function isHardcore() : bool{
-		return $this->getConfigBool("hardcore", false);
-	}
-
 	public function getDefaultGamemode() : int{
 		return $this->getConfigInt("gamemode", 0) & 0b11;
 	}
@@ -925,7 +921,7 @@ class Server{
 		}
 		$path = $this->getDataPath() . "worlds/" . $name . "/";
 		if(!($this->getLevelByName($name) instanceof Level)){
-			return is_dir($path) and count(array_filter(scandir($path, SCANDIR_SORT_NONE), function(string $v) : bool{
+			return is_dir($path) and count(array_filter(scandir($path, SCANDIR_SORT_NONE), static function(string $v) : bool{
 				return $v !== ".." and $v !== ".";
 			})) > 0;
 		}
@@ -1199,14 +1195,13 @@ class Server{
 			$this->logger->info("Loading server properties...");
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
 				"motd" => \pocketmine\NAME . " Server",
+				"server-ip" => "0.0.0.0",
 				"server-port" => 19132,
 				"white-list" => false,
-				"announce-player-achievements" => true,
 				"spawn-protection" => 16,
 				"max-players" => 20,
 				"gamemode" => 0,
 				"force-gamemode" => false,
-				"hardcore" => false,
 				"pvp" => true,
 				"difficulty" => Level::DIFFICULTY_NORMAL,
 				"generator-settings" => "",
@@ -1215,7 +1210,7 @@ class Server{
 				"level-type" => "DEFAULT",
 				"enable-query" => true,
 				"enable-rcon" => false,
-				"rcon.password" => substr(base64_encode(random_bytes(20)), 3, 10),
+				"rcon.password" => substr(base64_encode(random_bytes(32)), 3, 10),
 				"auto-save" => true,
 				"view-distance" => 8,
 				"xbox-auth" => true,
@@ -1321,10 +1316,6 @@ class Server{
 				$this->logger->warning($this->getLanguage()->translateString("pocketmine.server.authProperty.disabled"));
 			}
 
-			if($this->getConfigBool("hardcore", false) and $this->getDifficulty() < Level::DIFFICULTY_HARD){
-				$this->setConfigInt("difficulty", Level::DIFFICULTY_HARD);
-			}
-
 			if(\pocketmine\DEBUG >= 0){
 				@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
 			}
@@ -1372,7 +1363,7 @@ class Server{
 			$this->pluginManager = new PluginManager($this, $this->commandMap, ((bool) $this->getProperty("plugins.legacy-data-dir", true)) ? null : $this->getDataPath() . "plugin_data" . DIRECTORY_SEPARATOR);
 			$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
 			$this->pluginManager->registerInterface(new PharPluginLoader($this->autoloader));
-			if((bool) $this->config->get("plugins.builtin-source-loader", false)) {
+			if($this->config->getNested("plugins.builtin-source-loader", false)){
 				$this->pluginManager->registerInterface(new SourcePluginLoader($this->autoloader));
 			}
 			$this->pluginManager->registerInterface(new ScriptPluginLoader());
@@ -1385,9 +1376,7 @@ class Server{
 
 			$extra = $this->config->getNested("plugins.extra-plugin-folder", []);
 			foreach(is_array($extra) ? $extra : [] as $path){
-				if(is_dir((string) $path)){
-					$this->pluginManager->loadPlugins($this->getDataPath() . (string) $path . DIRECTORY_SEPARATOR);
-				}
+				$this->pluginManager->loadPlugins($this->getDataPath() . $path);
 			}
 
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
@@ -1587,7 +1576,7 @@ class Server{
 		$targets = array_filter($players, static function(Player $player) : bool{ return $player->isConnected(); });
 
 		if(count($targets) > 0){
-			foreach ($targets as $target) {
+			foreach($targets as $target){
 				$protocol = $target->getProtocol();
 				if(!isset($batches[$protocol])){
 					$batch = new BatchPacket();
@@ -1605,7 +1594,7 @@ class Server{
 				$batches[$protocol][1][] = $target;
 			}
 
-			foreach ($batches as $batchData) {
+			foreach($batches as $batchData){
 				$pk = &$batchData[0];
 				$targets = &$batchData[1];
 				if(Network::$BATCH_THRESHOLD >= 0 and strlen($pk->payload) >= Network::$BATCH_THRESHOLD){
@@ -2053,7 +2042,7 @@ class Server{
 		return $this->forceLanguage;
 	}
 
-	public function getOfflinePlayerDataManager() : OfflinePlayerDataManager {
+	public function getOfflinePlayerDataManager() : OfflinePlayerDataManager{
 		return $this->offlinePlayerDataManager;
 	}
 

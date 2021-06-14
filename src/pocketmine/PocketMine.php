@@ -36,7 +36,7 @@ namespace pocketmine {
 
 	require_once __DIR__ . '/VersionInfo.php';
 
-	const MIN_PHP_VERSION = "7.3.0";
+	const MIN_PHP_VERSION = "7.4.0";
 
 	/**
 	 * @param string $message
@@ -262,7 +262,7 @@ namespace pocketmine {
 			Terminal::init();
 		}
 
-		$logger = new MainLogger(\pocketmine\DATA . "server.log");
+		$logger = new MainLogger(\pocketmine\DATA . "server.log", DATA . '/log_archive');
 		$logger->registerStatic();
 
 		foreach($tzError as $e){

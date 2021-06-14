@@ -34,6 +34,6 @@ const _VERSION_INFO_INCLUDED = true;
 
 const NAME = "OpenTouch";
 const SERVER_VERSION = "1.0.6";
-const BASE_VERSION = "3.20.0";
+const BASE_VERSION = "3.21.1";
 const IS_DEVELOPMENT_BUILD = true;
 const BUILD_NUMBER = 0;

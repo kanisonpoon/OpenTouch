@@ -29,27 +29,31 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\Player;
 
-class FishingRod extends Item {
-	public function __construct(int $meta = 0) {
+class FishingRod extends Item{
+	public function __construct(int $meta = 0){
 		parent::__construct(self::FISHING_ROD, $meta, "Fishing Rod");
 	}
 
-	public function onClickAir(Player $player, Vector3 $directionVector): bool {
-		if (!$player->hasItemCooldown($this)) {
+	public function onClickAir(Player $player, Vector3 $directionVector) : bool{
+		if(!$player->hasItemCooldown($this)){
 			$player->resetItemCooldown($this);
 
-			if ($player->getFishingHook() === null) {
+			if($player->getFishingHook() === null){
+				$direction = $player->getDirectionVector();
+				$radY = ($direction->y / 180) * M_PI;
+				$x = cos($radY) * 0.16;
+				$z = sin($radY) * 0.16;
 				/** @var FishingHook $hook */
 				$hook = Entity::createEntity("FishingHook",
 					$player->getLevelNonNull(),
 					Entity::createBaseNBT(
-						$player->add(0, $player->getEyeHeight() - 0.1, 0),
+						$player->add(-$x, $player->getEyeHeight() - 0.10000000149011612, -$z),
 						$player->getDirectionVector()->multiply(0.4)),
 					$player);
 				$hook->spawnToAll();
-			} else {
+			}else{
+				$player->getFishingHook()->handleHookRetraction();
 				$player->getFishingHook()->flagForDespawn();
-				$player->setFishingHook(null);
 			}
 			$player->broadcastEntityEvent(AnimatePacket::ACTION_SWING_ARM);
 			return true;

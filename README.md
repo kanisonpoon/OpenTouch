@@ -1,4 +1,5 @@
 <p align="center">
+<<<<<<< HEAD
 	<a href="https://github.com/ApexieDevelopment/OpenTouch"><img src="https://raw.githubusercontent.com/ApexieDevelopment/OpenTouch/stable/assets/OpenTouch.png"></img></a><br>
 	<b>A support-rich server software for Minecraft Bedrock Edition based on PocketMine-MP.</b>
 </p>

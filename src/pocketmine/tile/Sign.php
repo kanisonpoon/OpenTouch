@@ -52,6 +52,9 @@ class Sign extends Spawnable{
 	/** @var string[] */
 	protected $text = ["", "", "", ""];
 
+	/** @var int|null */
+	protected $editorEntityRuntimeId = null;
+
 	protected function readSaveData(CompoundTag $nbt) : void{
 		if($nbt->hasTag(self::TAG_TEXT_BLOB, StringTag::class)){ //MCPE 1.2 save format
 			$this->text = self::fixTextBlob($nbt->getString(self::TAG_TEXT_BLOB));
@@ -63,7 +66,7 @@ class Sign extends Spawnable{
 				}
 			}
 		}
-		$this->text = array_map(function(string $line) : string{
+		$this->text = array_map(static function(string $line) : string{
 			return mb_scrub($line, 'UTF-8');
 		}, $this->text);
 	}
@@ -132,6 +135,22 @@ class Sign extends Spawnable{
 		return $this->text;
 	}
 
+	/**
+	 * Returns the entity runtime ID of the player who placed this sign. Only the player whose entity ID matches this
+	 * one may edit the sign text.
+	 * This is needed because as of 1.16.220, there is still no reliable way to detect when the MCPE client closed the
+	 * sign edit GUI, so we have no way to know when the text is finalized. This limits editing of the text to only the
+	 * player who placed it, and only while that player is online.
+	 * We can say for sure that the sign is finalized if either of the following occurs:
+	 * - The player quits (after rejoin, the player's entity runtimeID will be different).
+	 * - The chunk is unloaded (on next load, the entity runtimeID will be null, because it's not saved).
+	 */
+	public function getEditorEntityRuntimeId() : ?int{ return $this->editorEntityRuntimeId; }
+
+	public function setEditorEntityRuntimeId(?int $editorEntityRuntimeId) : void{
+		$this->editorEntityRuntimeId = $editorEntityRuntimeId;
+	}
+
 	protected function addAdditionalSpawnData(CompoundTag $nbt) : void{
 		$nbt->setString(self::TAG_TEXT_BLOB, implode("\n", $this->text));
 	}
@@ -157,7 +176,10 @@ class Sign extends Spawnable{
 
 		$removeFormat = $player->getRemoveFormat();
 
-		$ev = new SignChangeEvent($this->getBlock(), $player, array_map(function(string $line) use ($removeFormat) : string{ return TextFormat::clean($line, $removeFormat); }, $lines));
+		$ev = new SignChangeEvent($this->getBlock(), $player, array_map(static function(string $line) use ($removeFormat) : string{ return TextFormat::clean($line, $removeFormat); }, $lines));
+		if($this->editorEntityRuntimeId === null || $this->editorEntityRuntimeId !== $player->getId()){
+			$ev->setCancelled();
+		}
 		$ev->call();
 
 		if(!$ev->isCancelled()){
