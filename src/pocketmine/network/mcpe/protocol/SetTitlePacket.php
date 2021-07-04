@@ -57,6 +57,10 @@ class SetTitlePacket extends DataPacket{
 		$this->fadeInTime = $this->getVarInt();
 		$this->stayTime = $this->getVarInt();
 		$this->fadeOutTime = $this->getVarInt();
+		if($this->protocol >= BedrockProtocolinfo::PROTOCOL_448){
+			$this->getString();
+			$this->getString();
+		}
 	}
 
 	protected function encodePayload(){
@@ -65,6 +69,10 @@ class SetTitlePacket extends DataPacket{
 		$this->putVarInt($this->fadeInTime);
 		$this->putVarInt($this->stayTime);
 		$this->putVarInt($this->fadeOutTime);
+		if($this->protocol >= BedrockProtocolinfo::PROTOCOL_448){
+			$this->putString("");//idk
+			$this->putString("");
+		}
 	}
 
 	public function handle(NetworkSession $session) : bool{
