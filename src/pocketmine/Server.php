@@ -91,6 +91,7 @@ use pocketmine\utils\Terminal;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\Utils;
 use pocketmine\utils\UUID;
+use raklib\utils\InternetAddress;
 use function array_filter;
 use function array_key_exists;
 use function array_shift;
@@ -377,6 +378,10 @@ class Server{
 		return $this->getConfigInt("server-port", 19132);
 	}
 
+	public function getPortv6() : int{
+		return $this->getConfigInt("server-portv6", 19133);
+	}
+
 	public function getViewDistance() : int{
 		return max(2, $this->getConfigInt("view-distance", 8));
 	}
@@ -391,6 +396,11 @@ class Server{
 	public function getIp() : string{
 		$str = $this->getConfigString("server-ip");
 		return $str !== "" ? $str : "0.0.0.0";
+	}
+
+	public function getIpv6() : string{
+		$str = $this->getConfigString("server-ipv6");
+		return $str !== "" ? $str : "::";
 	}
 
 	/**
@@ -1197,6 +1207,8 @@ class Server{
 				"motd" => \pocketmine\NAME . " Server",
 				"server-ip" => "0.0.0.0",
 				"server-port" => 19132,
+				"server-ipv6" => "::",
+				"server-portv6" => 19133,
 				"white-list" => false,
 				"spawn-protection" => 16,
 				"max-players" => 20,
@@ -1321,6 +1333,7 @@ class Server{
 			}
 
 			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [$this->getIp(), $this->getPort()]));
+			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", ["[{$this->getIpv6()}]", $this->getPortv6()]));
 			define("BOOTUP_RANDOM", random_bytes(16));
 			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
 
@@ -1381,7 +1394,8 @@ class Server{
 
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
-			$this->network->registerInterface(new RakLibInterface($this));
+			$this->network->registerInterface(new RakLibInterface($this, new InternetAddress($this->getIp(), $this->getPort(), 4)));
+			$this->network->registerInterface(new RakLibInterface($this, new InternetAddress($this->getIpv6(), $this->getPortv6(), 6)));
 
 			foreach((array) $this->getProperty("worlds", []) as $name => $options){
 				if($options === null){

@@ -33,6 +33,11 @@ namespace pocketmine {
 	use pocketmine\utils\Utils;
 	use pocketmine\utils\VersionString;
 	use pocketmine\wizard\SetupWizard;
+	use function count;
+	use function define;
+	use function defined;
+	use function dirname;
+	use function extension_loaded;
 
 	require_once __DIR__ . '/VersionInfo.php';
 
@@ -120,11 +125,14 @@ namespace pocketmine {
 			$messages[] = "The native PocketMine extension is no longer supported.";
 		}
 
+		if(!defined('AF_INET6')){
+			$messages[] = "IPv6 support is required.";
+		}
+
 		return $messages;
 	}
 
 	/**
-	 * @param \Logger $logger
 	 * @return void
 	 */
 	function emit_performance_warnings(\Logger $logger){

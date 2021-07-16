@@ -117,7 +117,6 @@ use pocketmine\network\mcpe\protocol\BookEditPacket;
 use pocketmine\network\mcpe\protocol\ChunkRadiusUpdatedPacket;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
 use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
-use pocketmine\network\mcpe\protocol\CraftingDataPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\DisconnectPacket;
 use pocketmine\network\mcpe\protocol\InteractPacket;
@@ -2243,7 +2242,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 		$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("pocketmine.player.logIn", [
 			TextFormat::AQUA . $this->username . TextFormat::WHITE,
-			$this->ip,
+			"[$this->ip]",
 			$this->port,
 			$this->id,
 			$this->level->getName(),
@@ -2267,9 +2266,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$pk = $this->server->getCraftingManager()->getCraftingDataPacket($this->protocol);
 		if($pk !== null){
 			$this->dataPacket($pk);
-		}else{
-			//TODO
-			$this->dataPacket(new CraftingDataPacket());
 		}
 
 		$this->server->addOnlinePlayer($this);
@@ -2480,6 +2476,10 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$blockVector = $packet->trData->getBlockPos();
 			$face = $packet->trData->getFace();
 
+			if($this->inventory->getHeldItemIndex() !== $packet->trData->getHotbarSlot()){
+				$this->inventory->equipItem($packet->trData->getHotbarSlot());
+			}
+
 			switch($packet->trData->getActionType()){
 				case UseItemTransactionData::ACTION_CLICK_BLOCK:
 					$this->setUsingItem(false);
@@ -2623,6 +2623,10 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				return false;
 			}
 
+			if($this->inventory->getHeldItemIndex() !== $packet->trData->getHotbarSlot()){
+				$this->inventory->equipItem($packet->trData->getHotbarSlot());
+			}
+
 			switch($packet->trData->getActionType()){
 				case UseItemOnEntityTransactionData::ACTION_INTERACT:
 					break; //TODO
@@ -2714,6 +2718,10 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$this->inventory->sendContents($this);
 			return false;
 		}elseif($packet->trData instanceof ReleaseItemTransactionData){
+			if($this->inventory->getHeldItemIndex() !== $packet->trData->getHotbarSlot()){
+				$this->inventory->equipItem($packet->trData->getHotbarSlot());
+			}
+
 			try{
 				switch($packet->trData->getActionType()){
 					case ReleaseItemTransactionData::ACTION_RELEASE:
