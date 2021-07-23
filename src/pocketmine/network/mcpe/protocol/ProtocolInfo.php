@@ -43,7 +43,7 @@ interface ProtocolInfo{
 		419, 420, 421, 422,
 		423, 424, 425, 426, 427, 428,
 		431,
-		440, 441,
+		440,
 		448, 453
 	];
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
