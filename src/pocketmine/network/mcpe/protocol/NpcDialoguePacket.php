@@ -64,7 +64,11 @@ class NpcDialoguePacket extends DataPacket/* implements ClientboundPacket*/{
 	public function getActionJson() : string{ return $this->actionJson; }
 
 	protected function decodePayload() : void{
-		$this->npcActorUniqueId = $this->getEntityUniqueId();
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_10) {
+			$this->npcActorUniqueId = $this->getLLong(); //WHY NOT USING STANDARD METHODS, MOJANG
+		}else{
+			$this->npcActorUniqueId = $this->getEntityUniqueId();
+		}
 		$this->actionType = $this->getVarInt();
 		$this->dialogue = $this->getString();
 		$this->sceneName = $this->getString();
@@ -73,7 +77,11 @@ class NpcDialoguePacket extends DataPacket/* implements ClientboundPacket*/{
 	}
 
 	protected function encodePayload() : void{
-		$this->putEntityUniqueId($this->npcActorUniqueId);
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_10) {
+			$this->putLLong($this->npcActorUniqueId);
+		}else{
+			$this->putEntityUniqueId($this->npcActorUniqueId);
+		}
 		$this->putVarInt($this->actionType);
 		$this->putString($this->dialogue);
 		$this->putString($this->sceneName);
