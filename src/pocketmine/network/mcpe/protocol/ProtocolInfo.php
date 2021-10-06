@@ -44,7 +44,8 @@ interface ProtocolInfo{
 		423, 424, 425, 426, 427, 428,
 		431,
 		440,
-		448, 453
+		448, 453,
+		465
 	];
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
 	public const MINECRAFT_VERSION = 'v1.16.100-1.17.10';
