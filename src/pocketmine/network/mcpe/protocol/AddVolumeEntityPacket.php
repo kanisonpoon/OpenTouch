@@ -36,6 +36,8 @@ class AddVolumeEntityPacket extends DataPacket{
 	private $entityNetId;
 	/** @var CompoundTag */
 	private $data;
+	/** @var string */
+	private $engineVersion = "1.17.30";
 
 	public static function create(int $entityNetId, CompoundTag $data) : self{
 		$result = new self;
@@ -51,11 +53,17 @@ class AddVolumeEntityPacket extends DataPacket{
 	protected function decodePayload() : void{
 		$this->entityNetId = $this->getUnsignedVarInt();
 		$this->data = $this->getNbtCompoundRoot();
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$this->engineVersion = $in->getString();
+		}
 	}
 
 	protected function encodePayload() : void{
 		$this->putUnsignedVarInt($this->entityNetId);
 		$this->put((new NetworkLittleEndianNBTStream())->write($this->data));
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$out->putString($this->engineVersion);
+		}
 	}
 
 	public function handle(NetworkSession $handler) : bool{
