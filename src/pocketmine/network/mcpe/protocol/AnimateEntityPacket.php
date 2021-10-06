@@ -82,6 +82,9 @@ class AnimateEntityPacket extends DataPacket/* implements ClientboundPacket*/{
 		$this->animation = $this->getString();
 		$this->nextState = $this->getString();
 		$this->stopExpression = $this->getString();
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$in->getLInt();
+		}
 		$this->controller = $this->getString();
 		$this->blendOutTime = $this->getLFloat();
 		$this->actorRuntimeIds = [];
@@ -94,6 +97,9 @@ class AnimateEntityPacket extends DataPacket/* implements ClientboundPacket*/{
 		$this->putString($this->animation);
 		$this->putString($this->nextState);
 		$this->putString($this->stopExpression);
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$out->putLInt(0);
+		}
 		$this->putString($this->controller);
 		$this->putLFloat($this->blendOutTime);
 		$this->putUnsignedVarInt(count($this->actorRuntimeIds));
