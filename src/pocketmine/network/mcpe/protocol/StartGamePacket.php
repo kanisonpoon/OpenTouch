@@ -180,7 +180,7 @@ class StartGamePacket extends DataPacket{
 	public $serverSoftwareVersion;
 
 	protected function decodePayload(){
-		$this->entityUniqueId = $this->getEntityUniqueId();
+		/*$this->entityUniqueId = $this->getEntityUniqueId();
 		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->playerGamemode = $this->getVarInt();
 
@@ -266,7 +266,7 @@ class StartGamePacket extends DataPacket{
 			$this->serverSoftwareVersion = $this->getString();
 		} else {
 			$this->serverSoftwareVersion = '';
-		}
+		}*/
 	}
 
 	protected function encodePayload(){
@@ -319,6 +319,10 @@ class StartGamePacket extends DataPacket{
 		$this->putLInt($this->limitedWorldWidth);
 		$this->putLInt($this->limitedWorldLength);
 		$this->putBool($this->isNewNether);
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$this->putString("");
+			$this->putString("");
+		}
 		$this->putBool($this->experimentalGameplayOverride !== null);
 		if($this->experimentalGameplayOverride !== null){
 			$this->putBool($this->experimentalGameplayOverride);
