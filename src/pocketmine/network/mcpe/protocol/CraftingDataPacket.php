@@ -170,6 +170,17 @@ class CraftingDataPacket extends DataPacket{
 			[$output, ] = $mapping->fromNetworkId($outputIdNet, 0);
 			$this->potionContainerRecipes[] = new PotionContainerChangeRecipe($input, $ingredient, $output);
 		}
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			for($i = 0, $count = $in->getUnsignedVarInt(); $i < $count; ++$i){
+				$inputIdAndData = $in->getVarInt();
+				[$inputId, $inputMeta] = [$inputIdAndData >> 16, $inputIdAndData & 0x7fff];
+				$outputs = [];
+				for($j = 0, $outputCount = $in->getUnsignedVarInt(); $j < $outputCount; ++$j){
+					$outputItemId = $in->getVarInt();
+					$outputItemCount = $in->getVarInt();
+				}
+			}
+		}
 		$this->cleanRecipes = $this->getBool();
 	}
 
@@ -303,7 +314,9 @@ class CraftingDataPacket extends DataPacket{
 			$this->putVarInt($recipe->getIngredientItemId());
 			$this->putVarInt($recipe->getOutputItemId());
 		}
-
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$this->putUnsignedVarInt(0);
+		}
 		$this->putBool($this->cleanRecipes);
 	}
 
