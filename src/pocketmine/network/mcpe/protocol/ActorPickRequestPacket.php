@@ -34,15 +34,23 @@ class ActorPickRequestPacket extends DataPacket{
 	public $entityUniqueId;
 	/** @var int */
 	public $hotbarSlot;
+	/** @var bool */
+	public $addUserData = false;
 
 	protected function decodePayload(){
 		$this->entityUniqueId = $this->getLLong();
 		$this->hotbarSlot = $this->getByte();
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$this->addUserData = $in->getBool();
+		}
 	}
 
 	protected function encodePayload(){
 		$this->putLLong($this->entityUniqueId);
 		$this->putByte($this->hotbarSlot);
+		if($this->protocol >= BedrockProtocolInfo::PROTOCOL_1_17_30){
+			$out->putBool($this->addUserData);
+		}
 	}
 
 	public function handle(NetworkSession $session) : bool{
